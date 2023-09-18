@@ -1,4 +1,4 @@
-#Fortify Report Download Automation
+**##Fortify Report Download Automation**
 This script provides an automated solution for interacting with the Fortify Software Security Center (SSC). It streamlines the process of generating, downloading, and subsequently deleting security reports, making it especially valuable for integration into CI/CD pipelines or other automated workflows.
 
 **Overview**
