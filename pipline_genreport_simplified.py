@@ -5,15 +5,28 @@ from decouple import config
 
 # Extract environment variables from .env file
 APP_NAME = config('SSC_APP_NAME')
-APP_ID = config('SSC_APP_NAME_ID')
 APP_VERSION = config('SSC_APP_VER_NAME')
-APP_VERSION_ID = config('SSC_APP_VER_ID')
 SSC_URL = config('SSC_URL')
 API_URI = f"{SSC_URL}/api/v1"
 SSC_AUTH_TOKEN = config('SSC_AUTH_TOKEN')
 REPORT_NAME = f"{APP_NAME} Developer Report"
 REPORT_FORMAT = "PDF"
 SSC_REPORT_TOKEN = config('SSC_REPORT_TOKEN')
+
+headers = {
+    'Accept': "application/json",
+    'Content-Type': "application/json",
+    'Authorization': f"FortifyToken {SSC_AUTH_TOKEN}"
+}
+
+#Obtain APP_ID used for report generation
+
+response = requests.get(f"{API_URI}/projects?q=name:{APP_NAME}", headers=headers)
+APP_ID=response.json()['data'][0]['id']
+
+#Obtain APP_VERSION_ID used for report generation
+response = requests.get(f"{API_URI}/projects/{APP_ID}/versions?q=name:{APP_VERSION}", headers=headers)
+APP_VERSION_ID=response.json()['data'][0]['id']
 
 
 # Define the report details and parameters
@@ -29,12 +42,6 @@ request_body = {
     "reportDefinitionId": 9,
     "type": "ISSUE",
     "project": {"id": int(APP_VERSION_ID), "name": APP_VERSION, "version": {"id": int(APP_ID), "name": APP_NAME}}
-}
-
-headers = {
-    'Accept': "application/json",
-    'Content-Type': "application/json",
-    'Authorization': f"FortifyToken {SSC_AUTH_TOKEN}"
 }
 
 # Create the report on the server
